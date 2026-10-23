@@ -1,0 +1,185 @@
+
+
+   
+:root {
+  --bg-900: #000000;      /* pure black background */
+  --primary: #ff6900;     /* single theme orange */
+  --muted: #ffffff;       /* white text */
+  --glass-1: rgba(255, 255, 255, 0.04);
+  --glass-2: rgba(255, 255, 255, 0.08);
+  --border-glass: rgba(255, 105, 0, 0.15);
+  --shadow-dark: rgba(0, 0, 0, 0.6);
+}
+
+/* =========================
+   Page background
+   ========================= */
+   
+.gradient-bg {
+  background: var(--bg-900);
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow-x: hidden;
+  min-height: 100vh;
+  z-index: 0;
+}
+
+/* subtle orange glow */
+.gradient-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 70% 30%,
+    rgba(255, 105, 0, 0.08) 0%,
+    transparent 45%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* subtle noise overlay */
+.gradient-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* =========================
+   Text shine effect
+   ========================= */
+@keyframes textShine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.animate-text-shine {
+  background: linear-gradient(
+    90deg,
+    var(--muted),
+    var(--primary),
+    var(--muted)
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: textShine 6s ease-in-out infinite;
+}
+
+/* =========================
+   Jumping button (solid orange)
+   ========================= */
+.jumping-button {
+  animation: jump 1.8s ease infinite;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  color: var(--muted);
+  background: var(--primary);
+  padding: 14px 26px;
+  border-radius: 12px;
+  min-width: 180px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(255, 105, 0, 0.3);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.jumping-button span:first-child { position: relative; z-index: 2; }
+
+@keyframes jump {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.jumping-button:hover {
+  animation: jump 1.2s ease infinite, pulse-orange 2s ease infinite;
+  transform: translateY(-4px);
+}
+
+/* pulse uses orange glow */
+@keyframes pulse-orange {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 105, 0, 0.5); }
+  70%  { box-shadow: 0 0 0 12px rgba(255, 105, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 105, 0, 0); }
+}
+
+/* =========================
+   Lottie / glass container
+   ========================= */
+.lottie-container {
+  background: var(--glass-1);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
+  max-width: 90%;
+}
+
+.lottie-container:hover {
+  background: var(--glass-2);
+  transform: translateY(-5px);
+}
+
+/* =========================
+   Paragraph and text
+   ========================= */
+.gradient-bg p {
+  color: var(--muted);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  transition: all 0.3s ease;
+  margin: 0 auto;
+}
+
+.gradient-bg p:hover {
+  text-shadow: 0 4px 12px rgba(0,0,0,0.7);
+}
+
+/* helpers */
+.text-primary { color: var(--primary) !important; }
+.text-muted { color: var(--muted) !important; }
+
+/* =========================
+   Responsive tweaks
+   ========================= */
+@media (max-width: 1024px) {
+  .creative-heading {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .creative-heading::after {
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+  }
+
+  @keyframes underlineGrow {
+    0%, 100% { transform: translateX(-50%) scaleX(0); }
+    50% { transform: translateX(-50%) scaleX(0.8); }
+  }
+}
+
+@media (max-width: 640px) {
+  .jumping-button {
+    min-width: 160px;
+    padding: 12px 24px;
+    font-size: 1rem;
+  }
+
+  @keyframes jump {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .lottie-container {
+    border-radius: 16px;
+    max-width: 100%;
+  }
+}

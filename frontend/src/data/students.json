@@ -1,0 +1,284 @@
+[
+  {
+    "id": "1",
+    "name": "Ananya Pattnaik",
+    "department": "Computer Science",
+    "cgpa": 8.95,
+    "skillScore": 98,
+    "coCurricularScore": 92,
+    "overallScore": 95,
+    "streak": 47,
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
+    "badges": ["Skill Master", "Active Learner", "Cultural Contributor"],
+    "achievements": [
+      { "title": "30-Day Streak", "icon": "🔥", "date": "2025-10-01" },
+      { "title": "Top Performer", "icon": "🏆", "date": "2025-09-15" },
+      { "title": "Code Warrior", "icon": "⚔️", "date": "2025-08-20" }
+    ],
+    "skills": {
+      "Programming": 95,
+      "Database": 90,
+      "WebDev": 98,
+      "AI/ML": 85,
+      "Communication": 92
+    },
+    "performanceHistory": [
+      { "month": "Aug", "score": 88 },
+      { "month": "Sep", "score": 91 },
+      { "month": "Oct", "score": 95 }
+    ]
+  },
+  {
+    "id": "2",
+    "name": "Debansh Subudhi",
+    "department": "Data Science",
+    "cgpa": 7.92,
+    "skillScore": 95,
+    "coCurricularScore": 88,
+    "overallScore": 92,
+    "streak": 35,
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=Samuel",
+    "badges": ["Data Wizard", "Team Player"],
+    "achievements": [
+      { "title": "Analytics Pro", "icon": "📊", "date": "2025-09-28" },
+      { "title": "Consistent Achiever", "icon": "⭐", "date": "2025-09-10" }
+    ],
+    "skills": {
+      "Programming": 92,
+      "Database": 95,
+      "WebDev": 88,
+      "AI/ML": 98,
+      "Communication": 85
+    },
+    "performanceHistory": [
+      { "month": "Aug", "score": 85 },
+      { "month": "Sep", "score": 89 },
+      { "month": "Oct", "score": 92 }
+    ]
+  },
+  {
+    "id": "3",
+    "name": "Shristi Patro",
+    "department": "Software Engineering",
+    "cgpa": 9.88,
+    "skillScore": 91,
+    "coCurricularScore": 95,
+    "overallScore": 91,
+    "streak": 28,
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=Isabella",
+    "badges": ["Active Learner", "Cultural Contributor", "Event Champion"],
+    "achievements": [
+      { "title": "Leadership Award", "icon": "👑", "date": "2025-10-05" },
+      { "title": "Community Builder", "icon": "🤝", "date": "2025-09-20" }
+    ],
+    "skills": {
+      "Programming": 88,
+      "Database": 85,
+      "WebDev": 92,
+      "AI/ML": 80,
+      "Communication": 98
+    },
+    "performanceHistory": [
+      { "month": "Aug", "score": 82 },
+      { "month": "Sep", "score": 87 },
+      { "month": "Oct", "score": 91 }
+    ]
+  },
+  {
+    "id": "4",
+    "name": "Sreyash Patro",
+    "department": "Computer Science",
+    "cgpa": 6.85,
+    "skillScore": 89,
+    "coCurricularScore": 85,
+    "overallScore": 87,
+    "streak": 21,
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=James",
+    "badges": ["Quick Learner"],
+    "achievements": [
+      { "title": "Problem Solver", "icon": "🧩", "date": "2025-09-12" }
+    ],
+    "skills": {
+      "Programming": 90,
+      "Database": 82,
+      "WebDev": 88,
+      "AI/ML": 85,
+      "Communication": 80
+    },
+    "performanceHistory": [
+      { "month": "Aug", "score": 80 },
+      { "month": "Sep", "score": 84 },
+      { "month": "Oct", "score": 87 }
+    ]
+  },
+  {
+    "id": "5",
+    "name": "Sriya Das",
+    "department": "Information Technology",
+    "cgpa": 7.90,
+    "skillScore": 93,
+    "coCurricularScore": 90,
+    "overallScore": 91,
+    "streak": 42,
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily",
+    "badges": ["Skill Master", "Consistent Performer"],
+    "achievements": [
+      { "title": "Innovation Award", "icon": "💡", "date": "2025-10-08" },
+      { "title": "Perfect Attendance", "icon": "✅", "date": "2025-09-30" }
+    ],
+    "skills": {
+      "Programming": 94,
+      "Database": 88,
+      "WebDev": 95,
+      "AI/ML": 87,
+      "Communication": 91
+    },
+    "performanceHistory": [
+      { "month": "Aug", "score": 86 },
+      { "month": "Sep", "score": 89 },
+      { "month": "Oct", "score": 91 }
+    ]
+  },
+  {
+    "id": "6",
+    "name": "Sweta Satapathy",
+    "department": "Cybersecurity",
+    "cgpa": 8.87,
+    "skillScore": 90,
+    "coCurricularScore": 87,
+    "overallScore": 89,
+    "streak": 30,
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=Chloe",
+    "badges": ["Security Expert", "Team Player"],
+    "achievements": [
+      { "title": "Security Champion", "icon": "🛡️", "date": "2025-09-25" },
+      { "title": "Collaboration Star", "icon": "🤝", "date": "2025-09-05" }
+    ],
+    "skills": {
+      "Programming": 89,
+      "Database": 84,
+      "WebDev": 86,
+      "AI/ML": 88,
+      "Communication": 90
+    },
+    "performanceHistory": [
+      { "month": "Aug", "score": 83 },
+      { "month": "Sep", "score": 87 },
+      { "month": "Oct", "score": 89 }
+    ]
+  },
+  {
+    "id": "7",
+    "name": "Aditee Panda",
+    "department": "Software Engineering",
+    "cgpa": 3.93,
+    "skillScore": 96,
+    "coCurricularScore": 93,
+    "overallScore": 94,
+    "streak": 50,
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=Sofia",
+    "badges": ["Top Performer", "Active Learner", "Cultural Contributor"],
+    "achievements": [
+      { "title": "Excellence in Coding", "icon": "💻", "date": "2025-10-03" },
+      { "title": "Community Leader", "icon": "🌟", "date": "2025-09-18" }
+    ],
+    "skills": {
+      "Programming": 97,
+      "Database": 92,
+      "WebDev": 95,
+      "AI/ML": 90,
+      "Communication": 94
+    },
+    "performanceHistory": [
+      { "month": "Aug", "score": 90 },
+      { "month": "Sep", "score": 93 },
+      { "month": "Oct", "score": 94 }
+    ]
+  },
+  {
+    "id": "8",
+    "name": "Sanchit Padhi",
+    "department": "Data Science",
+    "cgpa": 6.89,
+    "skillScore": 92,
+    "coCurricularScore": 89,
+    "overallScore": 90,
+    "streak": 33,
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=Harry",
+    "badges": ["Data Enthusiast", "Consistent Performer"],
+    "achievements": [
+      { "title": "Data Analysis Pro", "icon": "📈", "date": "2025-09-22" },
+      { "title": "Reliable Contributor", "icon": "🔗", "date": "2025-09-08" }
+    ],
+    "skills": {
+      "Programming": 91,
+      "Database": 93,
+      "WebDev": 89,
+      "AI/ML": 94,
+      "Communication": 86
+    },
+    "performanceHistory": [
+      { "month": "Aug", "score": 84 },
+      { "month": "Sep", "score": 88 },
+      { "month": "Oct", "score": 90 }
+    ]
+  },
+  {
+    "id": "9",
+    "name": "Swarit Nahak",
+    "department": "Information Technology",
+    "cgpa": 7.91,
+    "skillScore": 94,
+    "coCurricularScore": 91,
+    "overallScore": 92,
+    "streak": 38,
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=Swarit",
+    "badges": ["Skill Master", "Event Champion"],
+    "achievements": [
+      { "title": "Tech Innovator", "icon": "🚀", "date": "2025-10-06" },
+      { "title": "Event Organizer", "icon": "🎉", "date": "2025-09-27" }
+    ],
+    "skills": {
+      "Programming": 93,
+      "Database": 90,
+      "WebDev": 94,
+      "AI/ML": 89,
+      "Communication": 92
+    },
+    "performanceHistory": [
+      { "month": "Aug", "score": 87 },
+      { "month": "Sep", "score": 90 },
+      { "month": "Oct", "score": 92 }
+    ]
+  },
+  {
+    "id": "10",
+    "name": "Adarsh Subudhi",
+    "department": "Cybersecurity",
+    "cgpa": 8.86,
+    "skillScore": 91,
+    "coCurricularScore": 88,
+    "overallScore": 89,
+    "streak": 29,
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=Adarsh",
+    "badges": ["Security Specialist", "Team Player"],
+    "achievements": [
+      { "title": "Cybersecurity Expert", "icon": "🔒", "date": "2025-09-30" },
+      { "title": "Collaboration Champion", "icon": "🤝", "date": "2025-09-12" }
+    ],
+    "skills": {
+      "Programming": 90,
+      "Database": 85,
+      "WebDev": 87,
+      "AI/ML": 89,
+      "Communication": 91
+    },
+    "performanceHistory": [
+      { "month": "Aug", "score": 82 },
+      { "month": "Sep", "score": 86 },
+      { "month": "Oct", "score": 89 }
+    ]
+  }
+
+]
+

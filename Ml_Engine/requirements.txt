@@ -1,0 +1,10 @@
+Flask
+pymongo
+sentence-transformers
+torch
+numpy
+pandas
+tqdm
+python-dotenv
+scikit-learn
+einops

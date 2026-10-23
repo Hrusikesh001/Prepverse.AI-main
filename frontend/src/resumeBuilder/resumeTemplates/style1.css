@@ -1,0 +1,132 @@
+/* In your ResumeShakra.css file */
+/* ResumeShakra.css */
+/* Styles for the overall page layout */
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #f4f4f4; /* Light gray background to show the page */
+}
+
+.resume-shakra-container {
+  max-width: 8.5in; /* Standard U.S. Letter paper width */
+  min-height: 11in; /* Standard U.S. Letter paper height */
+  margin: 20px auto; /* Center the resume and add margin */
+  background-color: white;
+  padding: 0.7in 0.6in;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adds a subtle page shadow */
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+/* Header Section */
+.shakra-header {
+  text-align: center;
+  padding-bottom: 5px;
+}
+
+.shakra-name {
+  font-size: 2.5em;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.shakra-title {
+  font-size: 1.5em;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 5px 0 10px;
+}
+
+.shakra-contact-info {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  font-size: 0.9em;
+}
+
+.shakra-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.shakra-contact-item a {
+  color: #333;
+  text-decoration: none;
+}
+
+/* General Section Styles */
+.shakra-section {
+  margin-top: 20px;
+  page-break-inside: avoid; /* Prevents sections from splitting across pages */
+}
+
+.shakra-section-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-bottom: 2px solid #333; /* The horizontal line */
+  padding-bottom: 3px;
+  margin-bottom: 5px;
+}
+
+/* Content Styles */
+.shakra-paragraph, .shakra-skills-list p {
+  font-size: 1em;
+  line-height: 1.4;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.shakra-subheader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 5px;
+}
+
+.shakra-subheading-title, .shakra-project-heading-title {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0;
+}
+
+.shakra-date-range {
+  font-style: italic;
+  font-weight: bold;
+}
+
+.shakra-subheading-subtitle {
+  display: flex;
+  justify-content: space-between;
+  font-style: italic;
+  font-size: 0.95em;
+}
+
+.shakra-tools-used, .shakra-gpa {
+  font-style: normal;
+  font-weight: normal;
+}
+
+.shakra-item-list {
+  list-style-type: none; /* Removes default bullets */
+  padding-left: 15px;
+  margin-top: 5px;
+}
+
+.shakra-item-list li {
+  position: relative;
+  font-size: 1em;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.shakra-item-list li::before {
+  content: '•'; /* Adds a custom bullet point */
+  position: absolute;
+  left: -15px;
+  font-weight: bold;
+  color: #333;
+}
