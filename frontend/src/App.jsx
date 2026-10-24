@@ -70,7 +70,7 @@ function App() {
     checkSession();
   }, []);
 
-  
+
   // Botpress chatbot integration
   useEffect(() => {
     const script1 = document.createElement("script");

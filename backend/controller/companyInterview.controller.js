@@ -277,16 +277,20 @@ export const generateInterviewQuestions = async (req, res) => {
 
 
 export const evaluateInterviewResult = async (req, res) => {
-
-  const { interivewId } = req.body;
+  const interivewId = req.body.interivewId || req.body.interviewId;
 
   if (!interivewId) {
-    return res.status(501).json({ message: "Missing interviewId" });
+    return res.status(400).json({ message: "Missing interviewId" });
   }
 
   try {
+    const interviewData = await InterviewData.findById(interivewId)
+      .populate("participant", "name email username profilePicURL")
+      .populate("interviewId");
 
-    const interviewData = await InterviewData.findById(interivewId).populate("participant", "name email username profilePicURL").populate("interviewId");
+    if (!interviewData) {
+      return res.status(404).json({ message: "Interview data not found for ID: " + interivewId });
+    }
 
     const { questions, answers } = interviewData;
 
@@ -302,8 +306,8 @@ export const evaluateInterviewResult = async (req, res) => {
 
     res.status(200).json({ message: "Interview data saved!", interviewData });
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({ message: 'Server error' });
+    console.error("[evaluateInterviewResult] Error:", err.message);
+    return res.status(500).json({ message: 'Server error', detail: err.message });
   }
 }
 

@@ -109,6 +109,11 @@ server.listen(port, () => {
   console.log("app is running at port 8000");
 });
 
+// Increase server timeout to 10 minutes to allow local LLM (Ollama) to finish
+// generating the interview evaluation report without the connection dropping.
+server.timeout = 600000;        // 10 minutes
+server.keepAliveTimeout = 605000;
+
 
 
 

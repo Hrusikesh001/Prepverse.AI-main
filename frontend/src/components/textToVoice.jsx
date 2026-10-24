@@ -6,7 +6,8 @@ function TextToVoice({ onStart, onEnd, setStopSpeakingCallback }) {
   const audioRef = useRef(null);
 
   const speakText = async () => {
-    if (!assistantContent.trim()) return;
+    // Guard BEFORE calling onStart — an empty string must never flip aiSpeaking
+    if (!assistantContent || !assistantContent.trim()) return;
 
     try {
       onStart?.();

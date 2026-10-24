@@ -18,6 +18,7 @@ import InterviewFeedback from "../components/interviewFeedback.jsx";
 import creatingReportAnimation from '../assets/animations/creatingReport.json'
 import Lottie from "lottie-react";
 import { ThemeContext } from "../context/ThemeContext";
+import toast from 'react-hot-toast';
 
 function InterviewPage() {
   const [spokenText, setSpokenText] = useState("");
@@ -28,9 +29,13 @@ function InterviewPage() {
   const [aiSpeaking, setAiSpeaking] = useState(false);
   const [finishInterview, setFinishInterview] = useState(false);
   const [reportLoading, setReportLoading] = useState(false);
+  const [reportError, setReportError] = useState(false);
   const [reportData, setReportData] = useState({});
   const [stopSpeaking, setStopSpeaking] = useState(() => () => {});
   const [isMobileView, setIsMobileView] = useState(false);
+
+  // Guard ref — prevents handleEndInterview from being called more than once
+  const interviewEndedRef = useRef(false);
 
   const scrollRef = useRef(null);
   const { authUser } = useAuth();
@@ -83,31 +88,55 @@ function InterviewPage() {
   }
 
   const handleEndInterview = async () => {
-    setReportLoading(true);
+    // Prevent duplicate calls from the useEffect or distractionDetect
+    if (interviewEndedRef.current) return;
+    interviewEndedRef.current = true;
+
+    // Stop AI speech immediately and freeze the interview UI
     stopSpeaking();
-    
+    setStartInterview(false);
+    setFinishInterview(false); // Reset so the useEffect won't re-fire
+    setReportError(false);     // Clear any previous error before retrying
+    setReportLoading(true);
+
     try {
+      console.log("[Interview] Generating report for interview ID:", interviewModelId);
+
       const { data } = await axios.post(
         `${server}/interview/evaluateInterviewResult`,
-        { interivewId: interviewModelId },
+        { interivewId: interviewModelId }, // matches backend: const { interivewId } = req.body
         { withCredentials: true }
       );
 
-      if (data?.interviewData) {
-        console.log(data.interviewData);
-        setReportData(data.interviewData);
+      console.log("[Interview] Report API response:", data);
+
+      // Guard: if the API succeeded but returned no report data, treat it as an error
+      // instead of silently falling through (which would show the interview screen again)
+      if (!data?.interviewData || Object.keys(data.interviewData).length === 0) {
+        throw new Error("Report API succeeded but returned no interviewData.");
       }
 
-      setReportLoading(false);
+      setReportData(data.interviewData);
+      setAskedQuestions([]); // Only clear questions on success
     } catch (err) {
-      console.log(err);
+      console.error("[Interview] Report generation failed:", {
+        message: err.message,
+        url: err.config?.url,
+        status: err.response?.status,
+        serverDetail: err.response?.data,
+      });
+
+      setReportError(true);
+      interviewEndedRef.current = false; // Release guard so Retry button works
+      toast.error("Failed to generate report. Please try again.");
+    } finally {
       setReportLoading(false);
     }
-
-    setStartInterview(false);
-    setAskedQuestions([]);
-    setAssistantContent("");
+    // NOTE: Do NOT call setAssistantContent("") here — clearing it triggers
+    // TextToVoice's useEffect which calls onStart() and flips aiSpeaking,
+    // which would re-trigger this handler via the finishInterview useEffect.
   }
+
 
   useEffect(() => {
     if (distractionDetect) {
@@ -116,6 +145,9 @@ function InterviewPage() {
   }, [distractionDetect]);
 
   useEffect(() => {
+    // Only trigger end-interview once the AI has finished speaking its closing message
+    // and the interview was flagged as finished by the backend.
+    // The interviewEndedRef guard inside handleEndInterview prevents double-calls.
     if (!aiSpeaking && finishInterview) {
       handleEndInterview();
     }
@@ -194,7 +226,35 @@ function InterviewPage() {
           <h2 className={`relative text-2xl mt-6 font-semibold animate-pulse p-4 rounded-lg ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
             Generating Interview Report...
           </h2>
+          <p className={`text-center text-sm mt-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+            This may take a few minutes while AI evaluates your answers.
+          </p>
         </div>
+      </div>
+    );
+  }
+
+  if (reportError) {
+    return (
+      <div className={`fixed inset-0 ${theme === 'dark' ? 'bg-black' : 'bg-white'} z-[1000] w-[100vw] h-[100vh] flex flex-col items-center justify-center gap-6`}>
+        <h2 className={`text-2xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+          Report Generation Failed
+        </h2>
+        <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+          The AI model took too long or encountered an error. Please try again.
+        </p>
+        <button
+          className="px-6 py-3 bg-[#ff6900] hover:bg-[#e55d00] text-white font-semibold rounded-lg transition-all"
+          onClick={handleEndInterview}
+        >
+          Retry Report Generation
+        </button>
+        <button
+          className={`px-6 py-3 rounded-lg border font-semibold transition-all ${theme === 'dark' ? 'border-gray-700 text-gray-300 hover:bg-gray-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+          onClick={() => navigate('/')}
+        >
+          Go Home
+        </button>
       </div>
     );
   }
