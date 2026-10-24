@@ -122,6 +122,110 @@ export const uploadResume = async (req, res) => {
 };
 
 
+
+export const deleteResume = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized'
+      });
+    }
+
+    // Find the resume belonging to the authenticated user.
+    const resume = await ResumeData.findOne({ userId });
+
+    if (!resume) {
+      return res.status(404).json({
+        success: false,
+        message: 'Resume not found'
+      });
+    }
+
+    // Extract the Cloudinary public ID from the stored resume URL.
+    const resumeUrl = resume.resumeLink;
+    const urlParts = resumeUrl.split('/');
+    const uploadIndex = urlParts.findIndex(
+      (part) => part === 'upload'
+    );
+
+    if (uploadIndex !== -1) {
+      let publicIdParts = urlParts.slice(uploadIndex + 1);
+
+      // Remove Cloudinary transformation/version segments.
+      publicIdParts = publicIdParts.filter(
+        (part) => !/^v\d+$/.test(part)
+      );
+
+      const lastPart = publicIdParts[publicIdParts.length - 1];
+
+      if (lastPart) {
+        // Remove the file extension from the public ID.
+        publicIdParts[publicIdParts.length - 1] =
+          lastPart.replace(/\.[^/.]+$/, '');
+      }
+
+      const publicId = publicIdParts.join('/');
+
+      if (publicId) {
+        const resourceType = resumeUrl.includes('/raw/upload/')
+          ? 'raw'
+          : resumeUrl.includes('/image/upload/')
+            ? 'image'
+            : 'auto';
+
+        try {
+          const result = await cloudinary.uploader.destroy(
+            publicId,
+            { resource_type: resourceType }
+          );
+
+          if (
+            result.result !== 'ok' &&
+            result.result !== 'not found'
+          ) {
+            console.error('Cloudinary deletion result:', result);
+            return res.status(502).json({
+              success: false,
+              message: 'Cloudinary file could not be deleted'
+            });
+          }
+        } catch (cloudinaryError) {
+          console.error(
+            'Cloudinary deletion failed:',
+            cloudinaryError.message
+          );
+
+          return res.status(502).json({
+            success: false,
+            message: 'Could not delete resume from Cloudinary'
+          });
+        }
+      }
+    }
+
+    // Delete the database record after Cloudinary cleanup succeeds.
+    await ResumeData.deleteOne({ _id: resume._id });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Resume deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('Delete resume error:', error);
+
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to delete resume'
+    });
+  }
+};
+
+
+
 export const getResumeData = async (req, res) => {
 
   const userId = req.user._id;

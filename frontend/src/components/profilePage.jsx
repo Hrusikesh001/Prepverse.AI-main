@@ -12,6 +12,7 @@ function ProfilePage() {
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
   const [resumeLink, setResumeLink] = useState(authUser.user.resumeLink || "");
+  const [resumeSummary, setResumeSummary] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [resumeDetails, setResumeDetails] = useState({
@@ -32,16 +33,21 @@ function ProfilePage() {
           { withCredentials: true }
         );
 
-        if (data.resume_data) {
-          setResumeLink(data.resume_data.resumeLink);
-          const filteredData = {
-            skills: data.resume_data.resumeJSONdata.skills || [],
-            projects: data.resume_data.resumeJSONdata.projects || [],
-            education: data.resume_data.resumeJSONdata.education || [],
-            experience: data.resume_data.resumeJSONdata.experience || []
-          };
-          setResumeDetails(filteredData);
-        }
+if (data.resume_data) {
+  setResumeLink(data.resume_data.resumeLink || "");
+  setResumeSummary(data.resume_data.resumeReview || "");
+
+  const resumeJSON = data.resume_data.resumeJSONdata || {};
+
+  const filteredData = {
+    skills: resumeJSON.skills || [],
+    projects: resumeJSON.projects || [],
+    education: resumeJSON.education || [],
+    experience: resumeJSON.experience || []
+  };
+
+  setResumeDetails(filteredData);
+}
       } catch (err) {
         console.log(err);
       }
@@ -83,18 +89,24 @@ function ProfilePage() {
         }
       );
 
-      if (data.newResume) {
-        setResumeLink(data.newResume.resumeLink);
-        const filteredData = {
-          skills: data.newResume.resumeJSONdata.skills || [],
-          projects: data.newResume.resumeJSONdata.projects || [],
-          education: data.newResume.resumeJSONdata.education || [],
-          experience: data.newResume.resumeJSONdata.experience || []
-        };
-        setResumeDetails(filteredData);
-        toast.success("Resume uploaded successfully!");
-        setSelectedFile(null);
-      }
+if (data.newResume) {
+  setResumeLink(data.newResume.resumeLink || "");
+  setResumeSummary(data.newResume.resumeReview || "");
+
+  const resumeJSON = data.newResume.resumeJSONdata || {};
+
+  const filteredData = {
+    skills: resumeJSON.skills || [],
+    projects: resumeJSON.projects || [],
+    education: resumeJSON.education || [],
+    experience: resumeJSON.experience || []
+  };
+
+  setResumeDetails(filteredData);
+
+  toast.success("Resume uploaded successfully!");
+  setSelectedFile(null);
+}
 
     } catch (err) {
       console.error(err);
@@ -115,6 +127,7 @@ function ProfilePage() {
 
       if (data.success) {
         setResumeLink("");
+        setResumeSummary("");
         setResumeDetails({
           skills: [],
           projects: [],
@@ -360,6 +373,85 @@ function ProfilePage() {
     );
   };
 
+  // Render Markdown-style sections produced by generate_user_summary().
+  const renderResumeSummary = (summary) => {
+    if (!summary || !summary.trim()) return null;
+
+    const sections = summary
+      .split(/\n\s*\n/)
+      .map((block) => block.trim())
+      .filter(Boolean)
+      .map((block) => {
+        const lines = block.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+        let title = 'Professional Overview';
+        let bodyLines = lines;
+
+        if (lines.length > 0 && /^#{1,6}\s+/.test(lines[0])) {
+          title = lines[0].replace(/^#{1,6}\s+/, '').trim();
+          bodyLines = lines.slice(1);
+        } else if (lines.length > 0 && lines[0].endsWith(':')) {
+          title = lines[0].slice(0, -1).trim();
+          bodyLines = lines.slice(1);
+        }
+
+        const items = bodyLines
+          .map((line) => line.replace(/^[-*]\s+/, '').trim())
+          .filter(Boolean);
+
+        return { title, items, body: items.join('\n') };
+      });
+
+    const renderItem = (item, itemIndex) => {
+      const match = item.match(/^\*\*(.+?):\*\*\s*(.*)$/);
+      if (match) {
+        return (
+          <li key={`${match[1]}-${itemIndex}`}>
+            <span className="font-semibold text-gray-800">{match[1]}:</span>{' '}
+            {match[2].replace(/\*\*/g, '')}
+          </li>
+        );
+      }
+      return <li key={`${item.slice(0, 40)}-${itemIndex}`}>{item.replace(/\*\*/g, '').replace(/[.]$/, '')}</li>;
+    };
+
+    return (
+      <section className="mb-8 rounded-xl border border-orange-200 bg-white p-5 shadow-sm">
+        <h3 className="mb-5 text-xl font-bold text-orange-600">
+          Professional Resume Summary
+        </h3>
+        <div className="space-y-5">
+          {sections.map((section, index) => {
+            const isKeywords = /technical keywords for matching/i.test(section.title);
+            const keywords = isKeywords
+              ? section.items.join(', ').split(/[,;]\s*/).map((item) => item.trim()).filter(Boolean)
+              : [];
+
+            return (
+              <div key={`${section.title}-${index}`}>
+                <h4 className="mb-2 text-base font-semibold text-gray-800">
+                  {section.title}
+                </h4>
+                {isKeywords ? (
+                  <div className="flex flex-wrap gap-2">
+                    {keywords.map((keyword, keywordIndex) => (
+                      <span key={`${keyword}-${keywordIndex}`} className="rounded-full bg-orange-50 px-3 py-1 text-xs font-medium text-orange-700">
+                        {keyword.replace(/[.]$/, '')}
+                      </span>
+                    ))}
+                  </div>
+                ) : section.items.length > 0 ? (
+                  <ul className="list-disc space-y-1 pl-5 text-sm leading-6 text-gray-700">
+                    {section.items.map(renderItem)}
+                  </ul>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    );
+  };
+
   const hasResumeData = () => {
     const { skills, projects, education, experience } = resumeDetails;
 
@@ -371,7 +463,7 @@ function ProfilePage() {
     const hasEducation = education && education.length > 0;
     const hasExperience = experience && experience.length > 0;
 
-    return hasSkills || hasProjects || hasEducation || hasExperience;
+    return hasSkills || hasProjects || hasEducation || hasExperience || Boolean(resumeSummary.trim());
   };
 
   return (
@@ -630,6 +722,7 @@ function ProfilePage() {
 
             {hasResumeData() ? (
               <div className={`${theme === 'dark' ? 'bg-orange-100 border-gray-700' : 'bg-orange-50 border-gray-200'} border rounded-xl p-6 shadow-lg`}>
+                {renderResumeSummary(resumeSummary)}
                 {renderEducation(resumeDetails.education)}
                 {renderExperience(resumeDetails.experience)}
                 {renderSkills(resumeDetails.skills)}
