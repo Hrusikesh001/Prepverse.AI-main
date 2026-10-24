@@ -333,44 +333,81 @@ def _unique(values: list) -> list[str]:
 
 
 def evaluate_resume(resume_json, job_title, topics):
-    """Deterministic baseline evaluation using topic keyword matching."""
-    print("Using deterministic resume evaluation.")
+    """Evaluate topic coverage using normalized keyword matching."""
 
     if isinstance(resume_json, str):
         try:
             resume_json = json.loads(resume_json)
         except (json.JSONDecodeError, TypeError):
             resume_json = {}
+
     if not isinstance(resume_json, dict):
         resume_json = {}
 
     if isinstance(topics, str):
-        topics = [topic.strip() for topic in topics.split(",") if topic.strip()]
-    topics = topics or []
+        topics = [t.strip() for t in topics.split(",") if t.strip()]
+
+    topics = [t.strip() for t in (topics or []) if t.strip()]
+
+    sections = (
+        "skills", "projects", "experience", "education",
+        "certifications", "publications", "contributions",
+        "achievements"
+    )
 
     searchable_text = " ".join(
         json.dumps(resume_json.get(section, []), ensure_ascii=False)
-        for section in ("skills", "projects", "experience", "education", "certifications", "publications", "contributions", "achievements")
+        for section in sections
     ).lower()
 
-    matched_topics = [topic for topic in topics if topic.strip().lower() in searchable_text]
-    total_score = round((len(matched_topics) / len(topics)) * 100) if topics else 0
+    # Normalize punctuation and whitespace.
+    normalized_text = re.sub(r"[^a-z0-9+#.]+", " ", searchable_text)
+    words = set(normalized_text.split())
+
+    matched_topics = []
+    missing_topics = []
+
+    for topic in topics:
+        normalized_topic = re.sub(
+            r"[^a-z0-9+#.]+", " ", topic.lower()
+        ).strip()
+
+        if not normalized_topic:
+            continue
+
+        # First try an exact phrase match.
+        if normalized_topic in normalized_text:
+            matched_topics.append(topic)
+            continue
+
+        # Otherwise, give keyword-level credit when all words match.
+        topic_words = normalized_topic.split()
+
+        if all(word in words for word in topic_words):
+            matched_topics.append(topic)
+        else:
+            missing_topics.append(topic)
+
+    total_score = (
+        round(len(matched_topics) / len(topics) * 100)
+        if topics else 0
+    )
 
     if not topics:
-        feedback = "No required topics were provided, so a meaningful topic-match score could not be calculated."
-    elif matched_topics:
-        feedback = (
-            f"For the {job_title} role, the resume contains keyword matches for {', '.join(matched_topics)}. "
-            "This is a preliminary keyword-based result, not proof of hands-on experience. Review project descriptions "
-            "and responsibilities to verify practical usage."
-        )
+        feedback = "No required topics were provided."
     else:
         feedback = (
-            f"For the {job_title} role, no required topic keywords were found in the supplied resume data. "
-            "Verify that resume parsing completed correctly before drawing conclusions."
+            f"Preliminary topic coverage for {job_title}: "
+            f"{len(matched_topics)}/{len(topics)} topics matched. "
+            f"Matched: {', '.join(matched_topics) or 'None'}. "
+            f"Not found: {', '.join(missing_topics) or 'None'}. "
+            "This keyword score does not prove practical proficiency."
         )
 
-    return {"total_score": total_score, "summary_feedback": feedback}
+    return {
+        "total_score": total_score,
+        "summary_feedback": feedback
+    }
 
 
 def generate_user_summary(user_data: dict) -> str:
