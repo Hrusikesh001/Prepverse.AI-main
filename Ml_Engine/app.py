@@ -17,8 +17,15 @@ from recommend_service import (
 
 from dotenv import load_dotenv
 
-env_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path=env_path)
+from pathlib import Path
+from dotenv import load_dotenv
+
+env_path = Path(__file__).resolve().parent / ".env"
+load_dotenv(dotenv_path=env_path, override=True)
+
+MONGO_URI = os.getenv("MONGO_URI") or os.getenv("MONGODB_URI")
+DB_NAME = os.getenv("DB_NAME")
+COLLECTION_NAME = os.getenv("COLLECTION_NAME")
 
 app = Flask(__name__)
 
@@ -88,6 +95,9 @@ def ensure_mongo():
 
     try:
         print(f"Connecting to MongoDB: {db_name}.{coll_name}...")
+        print("[DEBUG] .env path:", env_path)
+        print("[DEBUG] Database:", db_name)
+        print("[DEBUG] Collection:", coll_name)
         client = MongoClient(uri)
         db = client[db_name]
         collection = db[coll_name]
@@ -113,25 +123,6 @@ def clean_text(text: str) -> str:
     text = re.sub(r"\s+", " ", text)
     text = re.sub(r"[^a-zA-Z0-9.,;:!?()\- ]", "", text)
     return text.strip()
-
-def build_combined_text(data: dict) -> str:
-    """Builds semantically rich text for a single internship (skills-weighted)."""
-    parts = []
-
-    if data.get("jobTitle"):
-        parts.append(("Internship Title: " + clean_text(data["jobTitle"]) + ". ") * 2)
-    if data.get("jobRole"):
-        parts.append(f"Role: {clean_text(data['jobRole'])}.")
-    if data.get("jobTopic"):
-        parts.append(("Topic: " + clean_text(data["jobTopic"]) + ". ") * 3)
-    if data.get("description"):
-        parts.append(("Responsibilities include: " + clean_text(data["description"]) + ". ") * 3)
-    # Skills are the strongest signal — repeat heavily so they dominate the embedding
-    if data.get("skills"):
-        skills_text = clean_text(data["skills"]) if isinstance(data["skills"], str) else clean_text(", ".join(data["skills"]))
-        parts.append(("Required skills: " + skills_text + ". ") * 4)
-
-    return " ".join(parts)
 
 
 def extract_candidate_skills(resume_json_data) -> list:
@@ -285,10 +276,29 @@ def recommend():
     })
 
     try:
-        print("Executing vector search against MongoDB...")
+        print("[DEBUG] Database:", DB_NAME)
+        print("[DEBUG] Collection:", collection.name)
+        print("[DEBUG] Internship documents:", collection.count_documents({}))
+        print("[DEBUG] Candidate embedding dimensions:", len(user_vector))
+        print("[DEBUG] Candidate skills:", candidate_skills)
+        print("[DEBUG] Filters:", filters)
+
         candidates = list(collection.aggregate(pipeline))
+
+        print("[DEBUG] Vector search results:", len(candidates))
+
     except Exception as e:
-        return jsonify({"error": f"Database query failed: {e}"}), 500
+        print("[ERROR] Vector search failed:", repr(e))
+        return jsonify({
+            "error": "Internship vector search failed",
+            "details": str(e)
+        }), 500
+
+    if not candidates:
+        print("[DEBUG] No internships returned by vector search.")
+        return jsonify([])
+
+    candidates = hard_skill_filter(candidates, candidate_skills)
 
     if not candidates:
         return jsonify([])

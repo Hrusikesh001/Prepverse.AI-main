@@ -14,7 +14,7 @@ MONGO_URI = os.getenv("MONGO_URI")
 DB_NAME = os.getenv("DB_NAME")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME")
 
-MODEL_NAME = "Alibaba-NLP/gte-large-en-v1.5"
+MODEL_NAME = "BAAI/bge-large-en-v1.5"
 CSV_FILE_PATH = "Internship_dataset.csv"  
 
 random.seed(42)
